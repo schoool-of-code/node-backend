@@ -1,0 +1,33 @@
+name: Deploy school-of-code-node-backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to AWS via sls
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 checkout
+        uses: actions/checkout@v2
+
+      - name: 💚 node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: 📦 install packages
+        run: npm install
+
+      - name: ⚙️ Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: 🚀 deploy to sls
+        run: sls deploy
