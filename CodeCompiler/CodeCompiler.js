@@ -7,8 +7,8 @@ const { getCourses } = require("../functions/database");
 
 class CodeCompiler {
   async CompileCode(data) {
-    const { source_code, language_id } = data;
-    const selectedRows = await getCourses();
+    const { source_code, language_id, course_id } = data;
+    const selectedRows = await getCourses(course_id);
     console.log(selectedRows);
     const inputData = {
       language_id: language_id,

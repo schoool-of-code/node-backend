@@ -40,6 +40,14 @@ functions:
           method: post
           cors: true
 
+  getCourseById:
+    handler: Courses/GetCourseById.handler
+    events:
+      - http:
+          path: courses/{id}
+          method: get
+          cors: true
+
   privateAPI:
     handler: user/private.handler
     events:
