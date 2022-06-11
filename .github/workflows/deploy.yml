@@ -31,12 +31,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      - env:
+
+      - name: 🚀 deploy to sls
+        env:
           RAPID_API_ID: ${{ secrets.RAPID_API_ID }}
           RDS_NAME: school_of_code_db
           RDS_HOST: ${{ secrets.RDS_HOST }}
           RDS_USER_NAME: school_of_code_user
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-
-      - name: 🚀 deploy to sls
         run: sls deploy
