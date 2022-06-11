@@ -1,7 +1,7 @@
 
 CREATE TABLE Courses
 (
- "id"          int NOT NULL,
+ "id"          BIGSERIAL  NOT NULL,
  title       text NOT NULL,
  description text NOT NULL,
  solution    text NOT NULL,

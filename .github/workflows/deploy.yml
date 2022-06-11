@@ -33,4 +33,10 @@ jobs:
           aws-region: eu-west-1
 
       - name: 🚀 deploy to sls
+      - env:
+        RAPID_API_ID: ${{ secrets.RAPID_API_ID }}
+        RDS_NAME: school_of_code_db
+        RDS_HOST: ${{ secrets.RDS_HOST }}
+        RDS_USER_NAME: school_of_code_user
+        RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
         run: sls deploy
