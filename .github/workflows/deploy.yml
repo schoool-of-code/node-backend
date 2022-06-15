@@ -39,4 +39,4 @@ jobs:
           RDS_HOST: ${{ secrets.RDS_HOST }}
           RDS_USER_NAME: school_of_code_user
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-        run: sls deploy
+        run: sls deploy --region eu-west-1
