@@ -7,11 +7,11 @@ provider:
   environment:
     user_pool_id: { Ref: UserPool }
     client_id: { Ref: UserClient }
-    RAPID_API_ID: ${env:RAPID_API_ID}
-    RDS_NAME: school_of_code_db
-    RDS_HOST: ${env:RDS_HOST}
-    RDS_USER_NAME: school_of_code_user
-    RDS_PASSWORD: ${env:RDS_PASSWORD}
+    # RAPID_API_ID: ${env:RAPID_API_ID}
+    # RDS_NAME: school_of_code_db
+    # RDS_HOST: ${env:RDS_HOST}
+    # RDS_USER_NAME: school_of_code_user
+    # RDS_PASSWORD: ${env:RDS_PASSWORD}
 
   iamRoleStatements:
     - Effect: Allow
