@@ -15,7 +15,15 @@ class CodeCompiler {
       "utf-8"
     );
 
-    if (!decodeSourceCode.includes(selectedRows.javascript_required_code)) {
+    if (
+      !decodeSourceCode.includes(
+        language_id === 63
+          ? selectedRows.javascript_required_code
+          : language_id === 71
+          ? selectedRows.python_required_code
+          : selectedRows.csharp_required_code
+      )
+    ) {
       errorMessage = `The code must include starting code to correctly run tests.`;
     }
 

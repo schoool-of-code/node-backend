@@ -9,7 +9,11 @@ const getCourses = async (course_id) => {
       "solution",
       "video_id",
       "starting_code_javascript",
-      "javascript_required_code"
+      "javascript_required_code",
+      "starting_code_python",
+      "starting_code_csharp",
+      "python_required_code",
+      "csharp_required_code"
     )
     .where({ id: course_id });
   return selectedRows[0];
