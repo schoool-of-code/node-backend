@@ -10,7 +10,8 @@ class User {
       const isValid = await validateInput(data);
       if (!isValid) return "Invalid Input";
       const { email, password } = data;
-      const { user_pool_id } = process.env;
+      const { user_pool_id } = process.env.user_pool_id;
+      console.log(user_pool_id);
       const params = {
         UserPoolId: user_pool_id,
         Username: email,
@@ -40,6 +41,7 @@ class User {
       return true;
     } catch (error) {
       const message = error.message ? error.message : "Internal server error";
+      console.log(error);
       return sendResponse(500, { message });
     }
   }
