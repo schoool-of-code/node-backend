@@ -70,28 +70,27 @@ functions:
             claims:
               - email
 resources:
-  CognitoUserPool:
-    Type: "AWS::Cognito::UserPool"
-    Properties:
-      MfaConfiguration: OFF
-      UserPoolName: my-user-pool
-      UsernameAttributes:
-        - email
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 6
-          RequireLowercase: False
-          RequireNumbers: True
-          RequireSymbols: False
-          RequireUppercase: True
-
-  CognitoUserPoolClient:
-    Type: "AWS::Cognito::UserPoolClient"
-    Properties:
-      ClientName: my-user-pool-client
-      GenerateSecret: False
-      UserPoolId:
-        Ref: CognitoUserPool
+  Resources:
+    CognitoUserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        UserPoolName: my-user-pool
+        UsernameAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: False
+            RequireNumbers: True
+            RequireSymbols: False
+            RequireUppercase: True
+    CognitoUserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      Properties:
+        ClientName: client-name
+        GenerateSecret: False
+        UserPoolId:
+          Ref: CognitoUserPool
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
