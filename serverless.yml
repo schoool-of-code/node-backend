@@ -71,12 +71,14 @@ functions:
               - email
 resources:
   Resources:
-    CognitoUserPool:
-      Type: "AWS::Cognito::UserPool"
+    UserPool:
+      Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: my-user-pool
-        UsernameAttributes:
-          - email
+        UserPoolName: serverless-auth-pool
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
         Policies:
           PasswordPolicy:
             MinimumLength: 6
@@ -84,13 +86,16 @@ resources:
             RequireNumbers: True
             RequireSymbols: False
             RequireUppercase: True
-    CognitoUserPoolClient:
-      Type: "AWS::Cognito::UserPoolClient"
+    UserClient:
+      Type: AWS::Cognito::UserPoolClient
       Properties:
-        ClientName: client-name
-        GenerateSecret: False
-        UserPoolId:
-          Ref: CognitoUserPool
+        ClientName: user-pool-ui
+        GenerateSecret: false
+        UserPoolId: { Ref: UserPool }
+        AccessTokenValidity: 5
+        IdTokenValidity: 5
+        ExplicitAuthFlows:
+          - "ADMIN_NO_SRP_AUTH"
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
