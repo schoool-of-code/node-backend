@@ -75,8 +75,10 @@ resources:
       Type: AWS::Cognito::UserPool
       Properties:
         UserPoolName: serverless-auth-pool
-        UsernameAttributes:
-          - email
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
         Policies:
           PasswordPolicy:
             MinimumLength: 6
