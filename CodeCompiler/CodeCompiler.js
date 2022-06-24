@@ -3,7 +3,10 @@ const {
   createSubmission,
   getSubmission,
 } = require("../functions/index");
-const { getCourses } = require("../functions/database");
+const {
+  getCourses,
+  getTestsByCourseIdAndSubmission,
+} = require("../functions/database");
 
 class CodeCompiler {
   async CompileCode(data) {
@@ -15,35 +18,81 @@ class CodeCompiler {
       "utf-8"
     );
 
-    if (
-      !decodeSourceCode.includes(
-        language_id === 63
-          ? selectedRows.javascript_required_code
-          : language_id === 71
-          ? selectedRows.python_required_code
-          : selectedRows.csharp_required_code
-      )
-    ) {
+    const languageOptions = {
+      javascript: {
+        required: selectedRows.javascript_required_code,
+        input: selectedRows.javascript_input_code,
+      },
+      python: {
+        required: selectedRows.python_required_code,
+        input: selectedRows.python_input_code,
+      },
+      csharp: {
+        required: selectedRows.csharp_required_code,
+        input: selectedRows.csharp_input_code,
+      },
+    };
+
+    let selectedLanguage =
+      language_id === 63
+        ? languageOptions.javascript
+        : language_id === 71
+        ? languageOptions.python
+        : languageOptions.csharp;
+
+    if (!decodeSourceCode.includes(selectedLanguage.required)) {
       errorMessage = `The code must include starting code to correctly run tests.`;
     }
 
     if (!errorMessage) {
+      const inputedCode = selectedLanguage.input.replace(
+        "{REPLACE HERE}",
+        Buffer.from(source_code, "base64").toString("utf-8")
+      );
+      const finalCode = Buffer.from(inputedCode).toString("base64");
+
+      const testCases = await getTestsByCourseIdAndSubmission(course_id, false);
+
+      let formattedTests = "";
+      testCases.forEach((element) => {
+        formattedTests = formattedTests.concat(element.input, "*");
+      });
+      formattedTests = formattedTests.slice(0, formattedTests.length - 1);
+
+      const encodedTests = Buffer.from(formattedTests).toString("base64");
+
       const inputData = {
         language_id: language_id,
-        source_code: source_code,
+        source_code: finalCode,
+        stdin: encodedTests,
       };
 
       const submissionToken = await createSubmission(inputData);
       const submissionOutput = await getSubmission(submissionToken);
+
+      const decodedOutputs = Buffer.from(
+        submissionOutput.stdout,
+        "base64"
+      ).toString("utf-8");
+
+      const formattedTestOuputs = decodedOutputs.split(/\r?\n/).slice(0, -1);
+
+      let testOuputs = testCases.map((element, index) => {
+        return {
+          tabName: `Sample Test Case ${index}`,
+          input: element.input,
+          expectedOutput: element.expected_output,
+          output: formattedTestOuputs[index],
+          debugOutput: formattedTestOuputs.slice(
+            0,
+            formattedTestOuputs.length - testCases.length
+          ),
+        };
+      });
+
       return sendResponse(200, {
         message: "Success",
-        data: {
-          tabName: "Sample Test Case 0",
-          input: ["10", "1 1 3 1 2 1 3 3 3"],
-          output: ["None"],
-          expectedOutput: ["4"],
-          debugOutput: submissionOutput.stdout,
-        },
+        data: testOuputs,
       });
     } else {
       return sendResponse(400, {
