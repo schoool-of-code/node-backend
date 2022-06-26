@@ -45,6 +45,14 @@ functions:
           method: post
           cors: true
 
+  newCodeSubmission:
+    handler: CodeCompiler/NewCodeSubmission.handler
+    events:
+      - http:
+          path: compile/submission/batch
+          method: post
+          cors: true
+
   getCourseById:
     handler: Courses/GetCourseById.handler
     events:
