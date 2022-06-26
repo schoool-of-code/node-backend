@@ -11,6 +11,7 @@ class Courses {
     });
   }
 
+  //Uses a query function to retrieve all courses from the database and returns them as data.
   async getAllCourses() {
     const allCourses = await getAllCoursesQuery();
 
