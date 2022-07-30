@@ -16,52 +16,62 @@ const sleep = async (milliseconds) => {
   });
 };
 
+const baseToString = (input) => Buffer.from(input, "base64").toString("utf-8");
+
+const stringToBase = (input) => Buffer.from(input).toString("base64");
+
+const getSelectedLanguage = (languageId, selectedRows) => {
+  const languageOptions = {
+    javascript: {
+      required: selectedRows.javascript_required_code,
+      input: selectedRows.javascript_input_code,
+    },
+    python: {
+      required: selectedRows.python_required_code,
+      input: selectedRows.python_input_code,
+    },
+    csharp: {
+      required: selectedRows.csharp_required_code,
+      input: selectedRows.csharp_input_code,
+    },
+  };
+
+  return languageId === 63
+    ? languageOptions.javascript
+    : languageId === 71
+    ? languageOptions.python
+    : languageOptions.csharp;
+};
+
+const insertUserCode = (selectedLanguage, source_code) => {
+  const inputedCode = selectedLanguage.input.replace(
+    "{REPLACE HERE}",
+    baseToString(source_code)
+  );
+  return stringToBase(inputedCode);
+};
+
 class CodeCompiler {
   async CompileCode(data) {
     let errorMessage = "";
     const { source_code, language_id, course_id } = data;
 
     const selectedRows = await getCourses(course_id);
-    const decodeSourceCode = Buffer.from(source_code, "base64").toString(
-      "utf-8"
-    );
+    const decodeSourceCode = baseToString(source_code);
 
-    const languageOptions = {
-      javascript: {
-        required: selectedRows.javascript_required_code,
-        input: selectedRows.javascript_input_code,
-      },
-      python: {
-        required: selectedRows.python_required_code,
-        input: selectedRows.python_input_code,
-      },
-      csharp: {
-        required: selectedRows.csharp_required_code,
-        input: selectedRows.csharp_input_code,
-      },
-    };
-
-    let selectedLanguage =
-      language_id === 63
-        ? languageOptions.javascript
-        : language_id === 71
-        ? languageOptions.python
-        : languageOptions.csharp;
+    const selectedLanguage = getSelectedLanguage(language_id, selectedRows);
 
     if (!decodeSourceCode.includes(selectedLanguage.required)) {
       errorMessage = `The code must include starting code to correctly run tests.`;
     }
 
     if (!errorMessage) {
-      const inputedCode = selectedLanguage.input.replace(
-        "{REPLACE HERE}",
-        Buffer.from(source_code, "base64").toString("utf-8")
-      );
-      const finalCode = Buffer.from(inputedCode).toString("base64");
+      const finalCode = insertUserCode(selectedLanguage, source_code);
 
       const testCases = await getTestsByCourseIdAndSubmission(course_id, false);
 
       let formattedTests = "";
+
       testCases.forEach((element) => {
         formattedTests = formattedTests.concat(element.input, "*");
       });
@@ -113,42 +123,16 @@ class CodeCompiler {
     const { source_code, language_id, course_id } = data;
 
     const selectedRows = await getCourses(course_id);
-    const decodeSourceCode = Buffer.from(source_code, "base64").toString(
-      "utf-8"
-    );
+    const decodeSourceCode = baseToString(source_code);
 
-    const languageOptions = {
-      javascript: {
-        required: selectedRows.javascript_required_code,
-        input: selectedRows.javascript_input_code,
-      },
-      python: {
-        required: selectedRows.python_required_code,
-        input: selectedRows.python_input_code,
-      },
-      csharp: {
-        required: selectedRows.csharp_required_code,
-        input: selectedRows.csharp_input_code,
-      },
-    };
-
-    let selectedLanguage =
-      language_id === 63
-        ? languageOptions.javascript
-        : language_id === 71
-        ? languageOptions.python
-        : languageOptions.csharp;
+    const selectedLanguage = getSelectedLanguage(language_id, selectedRows);
 
     if (!decodeSourceCode.includes(selectedLanguage.required)) {
       errorMessage = `The code must include starting code to correctly run tests.`;
     }
 
     if (!errorMessage) {
-      const inputedCode = selectedLanguage.input.replace(
-        "{REPLACE HERE}",
-        Buffer.from(source_code, "base64").toString("utf-8")
-      );
-      const finalCode = Buffer.from(inputedCode).toString("base64");
+      const finalCode = insertUserCode(selectedLanguage, source_code);
 
       const testCases = await getTestsByCourseIdAndSubmission(course_id, true);
 
@@ -159,10 +143,9 @@ class CodeCompiler {
           stdin: Buffer.from(test.input).toString("base64"),
         };
       });
-      console.log(batchInputs);
 
       const submissionResults = await createBatchSubmission(batchInputs);
-      console.log(submissionResults);
+
       let formattedSubmissionTokens = "";
       submissionResults.forEach((element) => {
         formattedSubmissionTokens = formattedSubmissionTokens.concat(
@@ -170,7 +153,9 @@ class CodeCompiler {
           ","
         );
       });
-      await sleep(3000);
+
+      await sleep(2000);
+
       const submissionOutputs = await getBatchSubmission(
         formattedSubmissionTokens.slice(0, -1)
       );
