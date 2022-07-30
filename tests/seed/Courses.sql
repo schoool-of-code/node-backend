@@ -6,6 +6,7 @@ CREATE TABLE Courses
  description text NOT NULL,
  solution    text NOT NULL,
  video_id    text NOT NULL,
+ starting_code text NOT NULL,
  CONSTRAINT PK_6 PRIMARY KEY ( "id" )
 );
 

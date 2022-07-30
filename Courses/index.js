@@ -7,7 +7,7 @@ class Courses {
 
     return sendResponse(200, {
       message: "Success",
-      data: selectedRows[0],
+      data: selectedRows,
     });
   }
 

@@ -45,6 +45,14 @@ functions:
           method: post
           cors: true
 
+  newCodeSubmission:
+    handler: CodeCompiler/NewCodeSubmission.handler
+    events:
+      - http:
+          path: compile/submission/batch
+          method: post
+          cors: true
+
   getCourseById:
     handler: Courses/GetCourseById.handler
     events:
@@ -90,18 +98,17 @@ resources:
         Policies:
           PasswordPolicy:
             MinimumLength: 6
-        AutoVerifiedAttributes: ["email"]
-
+            RequireLowercase: False
+            RequireNumbers: True
+            RequireSymbols: False
+            RequireUppercase: True
     UserClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
         ClientName: user-pool-ui
         GenerateSecret: false
         UserPoolId: { Ref: UserPool }
-        AccessTokenValidity: 5
-        IdTokenValidity: 5
-        ExplicitAuthFlows:
-          - "ADMIN_NO_SRP_AUTH"
+
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
