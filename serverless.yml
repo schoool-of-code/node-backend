@@ -60,6 +60,14 @@ functions:
           path: courses/{id}
           method: get
           cors: true
+  
+  getAllCourses:
+    handler: Courses/GetAllCourses.handler
+    events:
+      - http:
+          path: courses/
+          method: get
+          cors: true
 
   privateAPI:
     handler: user/private.handler
