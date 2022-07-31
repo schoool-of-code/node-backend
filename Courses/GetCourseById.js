@@ -5,4 +5,3 @@ module.exports.handler = async (event) => {
   const newCourses = new Courses();
   return await newCourses.getCourse(courseId);
 };
-``;

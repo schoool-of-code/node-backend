@@ -38,19 +38,15 @@ const getAllCoursesQuery = async () => {
   return courses;
 };
 
-module.exports = {
-  getCourses,
-  getTestsByCourseIdAndSubmission,
-  getAllCoursesQuery,
-};
-
 const getTestsByCourseIdAndSubmission = async (course_id, submission) => {
   const selectedRows = await database("test_cases")
     .select("id", "input", "expected_output")
     .where({ course_id: course_id, submission: submission });
   return selectedRows;
 };
+
 module.exports = {
   getCourses,
   getTestsByCourseIdAndSubmission,
+  getAllCoursesQuery,
 };
