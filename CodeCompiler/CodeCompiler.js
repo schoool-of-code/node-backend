@@ -53,6 +53,7 @@ const insertUserCode = (selectedLanguage, source_code) => {
 
 class CodeCompiler {
   async CompileCode(data) {
+    console.log(data);
     let errorMessage = "";
     const { source_code, language_id, course_id } = data;
 
@@ -60,7 +61,7 @@ class CodeCompiler {
     const decodeSourceCode = baseToString(source_code);
 
     const selectedLanguage = getSelectedLanguage(language_id, selectedRows);
-
+    console.log("section 1");
     if (!decodeSourceCode.includes(selectedLanguage.required)) {
       errorMessage = `The code must include starting code to correctly run tests.`;
     }
@@ -84,16 +85,22 @@ class CodeCompiler {
         source_code: finalCode,
         stdin: encodedTests,
       };
+      console.log("section 2");
 
       const submissionToken = await createSubmission(inputData);
       const submissionOutput = await getSubmission(submissionToken);
-
-      const decodedOutputs = Buffer.from(
-        submissionOutput.stdout,
-        "base64"
-      ).toString("utf-8");
-
-      const formattedTestOuputs = decodedOutputs.split(/\r?\n/).slice(0, -1);
+      console.log("section 3");
+      console.log(submissionOutput);
+      let formattedTestOuputs = "";
+      let decodedError = null;
+      if (submissionOutput.stdout) {
+        const decodedOutputs = baseToString(submissionOutput.stdout);
+        formattedTestOuputs = decodedOutputs.split(/\r?\n/).slice(0, -1);
+      }
+      if (submissionOutput.stderr) {
+        decodedError = baseToString(submissionOutput.stderr);
+      }
+      console.log("section 4");
 
       let testOuputs = testCases.map((element, index) => {
         return {
@@ -101,12 +108,14 @@ class CodeCompiler {
           input: element.input,
           expectedOutput: element.expected_output,
           output: formattedTestOuputs[index],
+          error: decodedError,
           debugOutput: formattedTestOuputs.slice(
             0,
             formattedTestOuputs.length - testCases.length
           ),
         };
       });
+      console.log("section 5");
 
       return sendResponse(200, {
         message: "Success",
