@@ -111,13 +111,13 @@ resources:
   Outputs:
     UserPoolId:
       Value:
-        Ref: CognitoUserPool
+        Ref: UserPool
       Export:
         Name: UserPoolId
 
     UserPoolClientId:
       Value:
-        Ref: CognitoUserPoolClient
+        Ref: UserClient
       Export:
         Name: UserPoolClientId
 
