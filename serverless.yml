@@ -5,8 +5,8 @@ provider:
   name: aws
   runtime: nodejs14.x
   environment:
-    user_pool_id: { Ref: UserPool }
-    client_id: { Ref: UserClient }
+    USER_POOL_ID: !ImportValue UserPoolId
+    USER_POOL_CLIENT_ID: !ImportValue UserPoolClientId
     # RAPID_API_ID: ${env:RAPID_API_ID}
     # RDS_NAME: school_of_code_db
     # RDS_HOST: ${env:RDS_HOST}
@@ -60,7 +60,7 @@ functions:
           path: courses/{id}
           method: get
           cors: true
-  
+
   getAllCourses:
     handler: Courses/GetAllCourses.handler
     events:
@@ -108,6 +108,17 @@ resources:
         ClientName: user-pool-ui
         GenerateSecret: false
         UserPoolId: { Ref: UserPool }
+  Outputs:
+    UserPoolId:
+      Value:
+        Ref: CognitoUserPool
+      Export: Name:UserPoolId
+
+    UserPoolClientId:
+      Value:
+        Ref: CognitoUserPoolClient
+      Export:
+        Name: UserPoolClientId
 
 plugins:
   - serverless-offline

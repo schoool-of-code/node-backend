@@ -10,10 +10,10 @@ class User {
       const isValid = await validateInput(data);
       if (!isValid) return "Invalid Input";
       const { email, password } = data;
-      const { user_pool_id } = process.env.user_pool_id;
-      console.log(user_pool_id);
+      const { USER_POOL_ID } = process.env.USER_POOL_ID;
+
       const params = {
-        UserPoolId: user_pool_id,
+        UserPoolId: USER_POOL_ID,
         Username: email,
         UserAttributes: [
           {
@@ -32,7 +32,7 @@ class User {
       if (response.User) {
         const paramsForSetPass = {
           Password: password,
-          UserPoolId: user_pool_id,
+          UserPoolId: USER_POOL_ID,
           Username: email,
           Permanent: true,
         };
@@ -48,12 +48,12 @@ class User {
 
   async LoginUser(data) {
     const { email, password } = JSON.parse(data);
-    const { user_pool_id, client_id } = process.env;
+    const { USER_POOL_ID, USER_POOL_CLIENT_ID } = process.env;
 
     const params = {
       AuthFlow: "ADMIN_NO_SRP_AUTH",
-      UserPoolId: user_pool_id,
-      ClientId: client_id,
+      UserPoolId: USER_POOL_ID,
+      ClientId: USER_POOL_CLIENT_ID,
       AuthParameters: {
         USERNAME: email,
         PASSWORD: password,
