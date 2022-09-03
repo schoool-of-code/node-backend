@@ -5,8 +5,6 @@ provider:
   name: aws
   runtime: nodejs14.x
   environment:
-    USER_POOL_ID: !ImportValue UserPoolId
-    USER_POOL_CLIENT_ID: !ImportValue UserPoolClientId
     # RAPID_API_ID: ${env:RAPID_API_ID}
     # RDS_NAME: school_of_code_db
     # RDS_HOST: ${env:RDS_HOST}
@@ -108,18 +106,6 @@ resources:
         ClientName: user-pool-ui
         GenerateSecret: false
         UserPoolId: { Ref: UserPool }
-  Outputs:
-    UserPoolId:
-      Value:
-        Ref: UserPool
-      Export:
-        Name: UserPoolId
-
-    UserPoolClientId:
-      Value:
-        Ref: UserClient
-      Export:
-        Name: UserPoolClientId
 
 plugins:
   - serverless-offline
