@@ -1,42 +1,29 @@
-name: Deploy school-of-code-node-backend
+name: Merge Schedule
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+  schedule:
+    # https://crontab.guru/every-hour
+    - cron: '0 * * * *'
 
 jobs:
-  deploy:
-    name: 🚀 Deploy to AWS via sls
+  merge_schedule:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📚 checkout
-        uses: actions/checkout@v2
-
-      - name: 💚 node
-        uses: actions/setup-node@v2
+      - uses: gr2m/merge-schedule-action@v2
         with:
-          node-version: 14
-
-      - name: 📦 install packages
-        run: npm install
-
-      - name: 📦 install serverless
-        run: npm i -g serverless
-
-      - name: ⚙️ Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-      - name: 🚀 deploy to sls
+          # Merge method to use. Possible values are merge, squash or
+          # rebase. Default is merge.
+          merge_method: squash
+          # Time zone to use. Default is UTC.
+         
+          require_statuses_success: 'true'
+          # Label to apply to the pull request if the merge fails. Default is
+          # `automerge-fail`.
+          automerge_fail_label: 'merge-schedule-failed'
         env:
-          RAPID_API_ID: ${{ secrets.RAPID_API_ID }}
-          RDS_NAME: school_of_code_db
-          RDS_HOST: ${{ secrets.RDS_HOST }}
-          RDS_USER_NAME: school_of_code_user
-          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-        run: sls deploy --region eu-west-1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
