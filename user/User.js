@@ -3,6 +3,9 @@ const { sendResponse, validateInput } = require("../functions/index");
 class User {
   constructor(cognito) {
     this.cognito = cognito;
+
+
+    
   }
 
   async RegisterUser(data) {
