@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Merge Schedule
+        uses: gr2m/merge-schedule-action@v2.4.3
+            
       - name: 📚 checkout
         uses: actions/checkout@v2
 
